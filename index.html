@@ -19,6 +19,12 @@
       margin-top: 30px;
     }
 
+    p {
+      text-align: center;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
     /* Container style for all pages */
     .container {
       display: none; /* Hide all pages initially */
@@ -93,8 +99,8 @@
   <div id="page1" class="container active">
     <h1>Welcome to Linguaphone</h1>
     <p>Your journey starts with just a few questions. Press "Ready" to begin.</p>
-    <div id="image-container">
-      <img src="https://justindonlon.com/wp-content/uploads/2024/10/UK-home-page-.png" alt="Image of London Bridge">
+    <div id="image-container" style="text-align: center;">
+      <img src="https://justindonlon.com/wp-content/uploads/2024/10/UK-home-page-.png" alt="Image of London Bridge" style="max-width: 50%;">
     </div>
     <button id="ready-button">Ready</button>
   </div>
@@ -118,7 +124,7 @@
 
   <!-- Page 3 -->
   <div id="page3" class="container">
-    <h1>Tell Us More</h1>
+    <h1>Tell Me More</h1>
     <div class="video-container">
       <iframe src="https://www.youtube-nocookie.com/embed/lnjfpj60-r8" frameborder="0" allowfullscreen></iframe>
     </div>
@@ -134,9 +140,9 @@
 
   <!-- Page 4: Speech to Text -->
   <div id="page4" class="container">
-    <h1>Let’s talk</h1>
+    <h1>Let’s Talk</h1>
     <div class="video-container">
-      <iframe src="https://www.youtube-nocookie.com/embed/lnjfpj60-r8" frameborder="0" allowfullscreen></iframe>
+      <iframe src="https://www.youtube-nocookie.com/embed/rbpcbMMdbyo" frameborder="0" allowfullscreen></iframe>
     </div>
     <div class="form-box">
       <p>Question: "What is the most difficult thing about learning English?"</p>
@@ -148,10 +154,16 @@
     </div>
   </div>
 
-  <!-- Page 5: Assessment -->
+  <!-- Page 5: Placeholder for the next question -->
   <div id="page5" class="container">
-    <h1>Assessment Completed</h1>
-    <p>Here we can display the next steps or actions based on the ChatGPT analysis.</p>
+    <h1>Just a few more questions</h1>
+    <div class="video-container">
+      <iframe src="https://www.youtube-nocookie.com/embed/rbpcbMMdbyo" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <div class="form-box">
+      <p>Question: "Please describe your learning style."</p>
+      <button id="record-button-2" class="idle">Record your answer</button>
+    </div>
   </div>
 
   <script>
@@ -193,8 +205,10 @@
         showPage('page4');
       });
 
+      // Page 4 button should not immediately go to Page 5; this is just a placeholder for now
       document.getElementById('record-button').addEventListener('click', function() {
-        // Add logic to show Page 5 after recording and analysis
+        // Here you will later add logic to transcribe and analyze the user's speech
+        // Placeholder for moving to Page 5
         showPage('page5');
       });
     });
