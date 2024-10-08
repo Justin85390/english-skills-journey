@@ -168,51 +168,151 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Ensure only Page 1 is visible at the start
-      document.getElementById('page1').classList.add('active');
-      hideAllPagesExcept('page1'); // Initially show only Page 1
-
-      // Hide all pages except the active one
-      function hideAllPagesExcept(activePage) {
-        const pages = ['page1', 'page2', 'page3', 'page4', 'page5'];
-        pages.forEach(pageId => {
-          const page = document.getElementById(pageId);
-          if (pageId === activePage) {
-            page.style.display = 'block';
-          } else {
-            page.style.display = 'none';
-          }
+      let recorder, audioChunks;
+    
+      // Start recording the audio
+      const startRecording = () => {
+        navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+          recorder = new MediaRecorder(stream);
+          audioChunks = [];
+          recorder.ondataavailable = e => audioChunks.push(e.data);
+          recorder.start();
         });
-      }
-
-      // Show the next page and hide the current one
-      function showPage(pageId) {
-        hideAllPagesExcept(pageId);
-      }
-
-      // Page navigation logic
-      document.getElementById('ready-button').addEventListener('click', function () {
-        showPage('page2');
-      });
-
-      document.getElementById('form1').addEventListener('submit', function (event) {
-        event.preventDefault();
-        showPage('page3');
-      });
-
-      document.getElementById('form2').addEventListener('submit', function (event) {
-        event.preventDefault();
-        showPage('page4');
-      });
-
-      // Page 4 button should not immediately go to Page 5; this is just a placeholder for now
+      };
+    
+      // Stop recording and handle upload and transcription
+      const stopRecording = async () => {
+        recorder.stop();
+        recorder.onstop = async () => {
+          const blob = new Blob(audioChunks, { type: 'audio/wav' });
+          const formData = new FormData();
+          formData.append('audio', blob);
+    
+          // Ensure the API keys are fetched from environment variables
+          const assemblyAIKey = process.env.NEXT_PUBLIC_ASSEMBLYAI_API_KEY;
+          const openaiApiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
+    
+          try {
+            // Upload audio to AssemblyAI
+            const response = await fetch('https://api.assemblyai.com/v2/upload', {
+              method: 'POST',
+              headers: { 'authorization': assemblyAIKey },
+              body: formData
+            });
+    
+            if (!response.ok) {
+              console.error('Failed to upload audio. Status:', response.status);
+              return;
+            }
+    
+            const data = await response.json();
+            const audioUrl = data.upload_url;
+    
+            // Inform user that their answer is being analyzed
+            document.getElementById('transcript-result').innerText = "Thank you, we are analyzing your answer, 1 moment please";
+    
+            // Start transcription
+            startTranscription(audioUrl);
+          } catch (error) {
+            console.error('Error uploading audio:', error);
+          }
+        };
+      };
+    
+      // Start transcription with AssemblyAI
+      const startTranscription = async (audioUrl) => {
+        try {
+          const response = await fetch('https://api.assemblyai.com/v2/transcript', {
+            method: 'POST',
+            headers: {
+              'authorization': process.env.NEXT_PUBLIC_ASSEMBLYAI_API_KEY,
+              'content-type': 'application/json'
+            },
+            body: JSON.stringify({ audio_url: audioUrl })
+          });
+    
+          const transcription = await response.json();
+          pollTranscription(transcription.id);
+        } catch (error) {
+          console.error('Error starting transcription:', error);
+        }
+      };
+    
+      // Poll AssemblyAI for the transcription result
+      const pollTranscription = async (transcriptionId) => {
+        const interval = setInterval(async () => {
+          try {
+            const response = await fetch(`https://api.assemblyai.com/v2/transcript/${transcriptionId}`, {
+              method: 'GET',
+              headers: { 'authorization': process.env.NEXT_PUBLIC_ASSEMBLYAI_API_KEY }
+            });
+    
+            const transcriptionResult = await response.json();
+            if (transcriptionResult.status === 'completed') {
+              clearInterval(interval);
+    
+              // Display the transcript
+              document.getElementById('transcript-result').innerText = `Transcript: ${transcriptionResult.text}`;
+    
+              // Send transcript to ChatGPT for analysis
+              sendToChatGPT(transcriptionResult.text);
+            }
+          } catch (error) {
+            console.error('Error polling transcription:', error);
+          }
+        }, 5000); // Poll every 5 seconds
+      };
+    
+      // Send the transcript to ChatGPT for analysis
+      const sendToChatGPT = async (text) => {
+        try {
+          const response = await fetch('https://api.openai.com/v1/completions', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}` },
+            body: JSON.stringify({
+              model: "text-davinci-003",
+              prompt: `Analyze this response: ${text} and evaluate the user's English proficiency level.`,
+              max_tokens: 150
+            })
+          });
+    
+          const data = await response.json();
+          const analysis = data.choices[0].text.trim();
+    
+          // Display ChatGPT analysis result
+          document.getElementById('analysis-result').innerText = `ChatGPT analysis: ${analysis}`;
+    
+          // Move to Page 5 after analysis
+          showPage('page5');
+        } catch (error) {
+          console.error('Error sending to ChatGPT:', error);
+        }
+      };
+    
+      // Button to start and stop recording
       document.getElementById('record-button').addEventListener('click', function() {
-        // Here you will later add logic to transcribe and analyze the user's speech
-        // Placeholder for moving to Page 5
-        showPage('page5');
+        if (!recorder || recorder.state === 'inactive') {
+          startRecording();
+          this.textContent = 'Recording...';
+          this.classList.add('recording');
+          this.classList.remove('idle');
+        } else {
+          stopRecording();
+          this.textContent = 'Record your answer';
+          this.classList.add('idle');
+          this.classList.remove('recording');
+        }
       });
+    
+      // Helper function to switch pages
+      const showPage = (pageId) => {
+        const pages = ['page1', 'page2', 'page3', 'page4', 'page5'];
+        pages.forEach(id => {
+          document.getElementById(id).style.display = id === pageId ? 'block' : 'none';
+        });
+      };
     });
-  </script>
+    </script>
 
 </body>
 </html>
