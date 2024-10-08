@@ -78,7 +78,7 @@
 <body>
 
   <!-- Page 1 -->
-  <div id="page1" class="active">
+  <div id="page1" class="container active">
     <h1>Welcome to Linguaphone</h1>
     <p>Your journey starts with just a few questions. Press "Ready" to begin.</p>
     <div id="image-container">
@@ -87,10 +87,48 @@
     <button id="ready-button">Ready</button>
   </div>
 
+  <!-- Page 2: Contact Details -->
+  <div id="page2" class="container">
+    <h1>Your Contact Details</h1>
+    <div class="form-box">
+      <form id="form1">
+        <input type="text" id="first-name" name="first-name" required placeholder="First Name">
+        <input type="text" id="last-name" name="last-name" required placeholder="Last Name">
+        <input type="email" id="email" name="email" required placeholder="Email">
+        <input type="text" id="phone" name="phone" required placeholder="Phone Number">
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Page 3: Video & More Info -->
+  <div id="page3" class="container">
+    <h1>Tell Us More</h1>
+    <div class="video-container">
+      <iframe src="https://www.youtube-nocookie.com/embed/lnjfpj60-r8" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <div class="form-box">
+      <form id="form2">
+        <textarea id="time-to-learn" name="time-to-learn" rows="3" required placeholder="How much time do you have to learn English?"></textarea>
+        <textarea id="motivation" name="motivation" rows="3" required placeholder="What is your motivation to learn English?"></textarea>
+        <textarea id="interests" name="interests" rows="3" required placeholder="What are some of your interests?"></textarea>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
+
   <script>
-    // Simple navigation logic for testing
+    // Page 1 to Page 2 Navigation
     document.getElementById('ready-button').addEventListener('click', function() {
-      document.getElementById('page1').style.display = 'none';
+      document.getElementById('page1').classList.remove('active');
+      document.getElementById('page2').classList.add('active');
+    });
+
+    // Page 2 to Page 3 Navigation
+    document.getElementById('form1').addEventListener('submit', function(event) {
+      event.preventDefault();
+      document.getElementById('page2').classList.remove('active');
+      document.getElementById('page3').classList.add('active');
     });
   </script>
 
