@@ -208,7 +208,6 @@
             const data = await response.json();
             const audioUrl = data.upload_url;
     
-            // Inform user that their answer is being analyzed
             document.getElementById('transcript-result').innerText = "Thank you, we are analyzing your answer, 1 moment please";
     
             // Start transcription
@@ -304,6 +303,23 @@
         }
       });
     
+      // Button to navigate from Page 1 to Page 2 (Ready Button)
+      document.getElementById('ready-button').addEventListener('click', function() {
+        showPage('page2');
+      });
+    
+      // Form submission navigation for Page 2 to Page 3
+      document.getElementById('form1').addEventListener('submit', function(event) {
+        event.preventDefault();  // Prevent page reload on form submission
+        showPage('page3');
+      });
+    
+      // Form submission navigation for Page 3 to Page 4
+      document.getElementById('form2').addEventListener('submit', function(event) {
+        event.preventDefault();  // Prevent page reload on form submission
+        showPage('page4');
+      });
+    
       // Helper function to switch pages
       const showPage = (pageId) => {
         const pages = ['page1', 'page2', 'page3', 'page4', 'page5'];
@@ -311,6 +327,9 @@
           document.getElementById(id).style.display = id === pageId ? 'block' : 'none';
         });
       };
+    
+      // Start the app by displaying Page 1
+      showPage('page1');
     });
     </script>
 
