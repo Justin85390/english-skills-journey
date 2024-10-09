@@ -7,73 +7,48 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
       background-color: #f5f5f5;
     }
 
     h1 {
       text-align: center;
       font-size: 36px;
-      font-weight: bold;
       margin-top: 30px;
     }
 
-    p {
-      text-align: center;
-      font-size: 18px;
-      margin-bottom: 20px;
-    }
-
-    /* Container style for all pages */
-    .container {
-      display: none; /* Hide all pages initially */
+    .page {
+      display: none;
       padding: 20px;
-      max-width: 1000px;
-      margin: auto;
     }
 
-    .container.active {
-      display: block; /* Active page will be shown */
+    .active {
+      display: block;
     }
 
-    /* Video and form styles */
     .video-container {
       width: 60%;
-      margin: 30px auto;
+      margin: 20px auto;
       text-align: center;
       border: 2px solid #ccc;
-      padding: 20px;
-      border-radius: 10px;
+      padding: 10px;
       background-color: #fff;
     }
 
     .video-container iframe {
       width: 100%;
       height: 315px;
-      border-radius: 5px;
     }
 
-    .form-box {
+    .form-box, .question-box {
       width: 60%;
       margin: 20px auto;
       text-align: center;
       border: 2px solid #ccc;
       padding: 20px;
-      border-radius: 10px;
       background-color: #fff;
     }
 
-    .form-box input, .form-box textarea {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
     button {
-      display: block;
       margin: 20px auto;
       padding: 10px 20px;
       font-size: 18px;
@@ -88,263 +63,153 @@
       background-color: red;
     }
 
-    button.idle {
-      background-color: green;
+    #timer {
+      font-size: 18px;
+      margin-top: 10px;
     }
+
+    img {
+      width: 100%;
+      max-width: 800px;
+      display: block;
+      margin: 20px auto;
+    }
+
   </style>
 </head>
 <body>
-
   <!-- Page 1 -->
-  <div id="page1" class="container active">
+  <div id="page1" class="page active">
     <h1>Welcome to Linguaphone</h1>
     <p>Your journey starts with just a few questions. Press "Ready" to begin.</p>
-    <div id="image-container" style="text-align: center;">
-      <img src="https://justindonlon.com/wp-content/uploads/2024/10/UK-home-page-.png" alt="Image of London Bridge" style="max-width: 50%;">
-    </div>
-    <button id="ready-button">Ready</button>
+    <img src="https://justindonlon.com/wp-content/uploads/2024/10/UK-home-page-.png" alt="Image of London Bridge">
+    <button onclick="goToPage(2)">Ready</button>
   </div>
 
-  <!-- Page 2: Contact Details -->
-  <div id="page2" class="container">
+  <!-- Page 2 -->
+  <div id="page2" class="page">
     <h1>Your Contact Details</h1>
     <div class="video-container">
       <iframe src="https://www.youtube-nocookie.com/embed/rbpcbMMdbyo" frameborder="0" allowfullscreen></iframe>
     </div>
-    <div class="form-box">
-      <form id="form1">
-        <input type="text" id="first-name" name="first-name" required placeholder="First Name">
-        <input type="text" id="last-name" name="last-name" required placeholder="Last Name">
-        <input type="email" id="email" name="email" required placeholder="Email">
-        <input type="text" id="phone" name="phone" required placeholder="Phone Number">
-        <button type="submit">Submit</button>
-      </form>
-    </div>
+    <form class="form-box">
+      <input type="text" placeholder="First Name">
+      <input type="text" placeholder="Last Name">
+      <input type="email" placeholder="Email">
+      <input type="text" placeholder="Phone Number">
+      <button type="submit" onclick="goToPage(3)">Submit</button>
+    </form>
   </div>
 
   <!-- Page 3 -->
-  <div id="page3" class="container">
-    <h1>Tell Me More</h1>
+  <div id="page3" class="page">
+    <h1>Tell Us More</h1>
     <div class="video-container">
       <iframe src="https://www.youtube-nocookie.com/embed/lnjfpj60-r8" frameborder="0" allowfullscreen></iframe>
     </div>
-    <div class="form-box">
-      <form id="form2">
-        <textarea id="time-to-learn" name="time-to-learn" rows="3" required placeholder="How much time do you have to learn English?"></textarea>
-        <textarea id="motivation" name="motivation" rows="3" required placeholder="What is your motivation to learn English?"></textarea>
-        <textarea id="interests" name="interests" rows="3" required placeholder="What are some of your interests?"></textarea>
-        <button type="submit">Submit</button>
-      </form>
-    </div>
+    <form class="form-box">
+      <textarea rows="4" placeholder="Your answer..."></textarea>
+      <button type="submit" onclick="goToPage(4)">Submit</button>
+    </form>
   </div>
 
-  <!-- Page 4: Speech to Text -->
-  <div id="page4" class="container">
+  <!-- Page 4 -->
+  <div id="page4" class="page">
     <h1>Let’s Talk</h1>
     <div class="video-container">
-      <iframe src="https://www.youtube-nocookie.com/embed/rbpcbMMdbyo" frameborder="0" allowfullscreen></iframe>
+      <iframe src="https://youtu.be-nocookie.com/embed/DXQzd0REkXY" frameborder="0" allowfullscreen></iframe>
     </div>
     <div class="form-box">
-      <p>Question: "What is the most difficult thing about learning English?"</p>
-      <button id="record-button" class="idle">Record your answer</button>
-
-      <!-- Section to display transcript and ChatGPT message -->
-      <div id="transcript-result" style="margin-top: 20px; font-size: 16px; color: #444;"></div>
-      <div id="analysis-result" style="margin-top: 20px; font-size: 18px; color: #333;"></div>
+      <p>What is the most difficult thing about learning English?</p>
+      <button id="record-button" onclick="startRecording()">Record your answer</button>
     </div>
   </div>
 
-  <!-- Page 5: Placeholder for the next question -->
-  <div id="page5" class="container">
-    <h1>Just a few more questions</h1>
+  <!-- Page 5 -->
+  <div id="page5" class="page">
+    <h1>SpeechAce</h1>
     <div class="video-container">
-      <iframe src="https://www.youtube-nocookie.com/embed/rbpcbMMdbyo" frameborder="0" allowfullscreen></iframe>
+      <iframe src="https://www.youtube-nocookie.com/embed/xIb8oYnc9gA" frameborder="0" allowfullscreen></iframe>
     </div>
     <div class="form-box">
-      <p>Question: "Please describe your learning style."</p>
-      <button id="record-button-2" class="idle">Record your answer</button>
+      <p>What is the most important skill for success in life?</p>
+      <button id="record-button-page5" onclick="startRecordingPage5()">Record your answer</button>
+      <span id="timer">30s</span>
+    </div>
+  </div>
+
+  <!-- Page 6 -->
+  <div id="page6" class="page">
+    <h1>Useful Information</h1>
+    <div class="video-container">
+      <iframe src="https://www.youtube-nocookie.com/embed/vXmhR3Mmaqc" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <div class="question-box">
+      <p>Let’s check your knowledge</p>
+      <div id="mcq-container">
+        <p>1. What is one way that traveling can help improve your English?</p>
+        <button onclick="nextQuestion()">A) You can practice conversations with native speakers.</button>
+        <button onclick="nextQuestion()">B) You can study more grammar rules.</button>
+        <button onclick="nextQuestion()">C) You can read more books in English.</button>
+      </div>
     </div>
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-  console.log('Page Loaded'); // Confirm that the JavaScript is being loaded
+    let timerInterval;
 
-  // Variables for audio recording
-  let recorder, audioChunks;
-
-  // Replace these with your actual API keys
-  const ASSEMBLYAI_API_KEY = '0d51dcbf8b3f49fe9f3a139d8ec02eec';  // Replace with your AssemblyAI key
-  const OPENAI_API_KEY = 'YOUR_OPENAI_API_Ksk-2WqeDnb-6swnkwCVRw4Crp8uDT8S9xgoDTXeh8F3OLT3BlbkFJ7HR1vhQ9NaT3cw2h0tRKw9oU1c2wcqVvQPjsY9BisAEY';          // Replace with your OpenAI key
-
-  // Function to start recording
-  const startRecording = () => {
-    console.log('Recording started');
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-      recorder = new MediaRecorder(stream);
-      audioChunks = [];
-      recorder.ondataavailable = e => audioChunks.push(e.data);
-      recorder.start();
-    });
-  };
-
-  // Function to stop recording and upload audio to AssemblyAI
-  const stopRecording = async () => {
-    console.log('Recording stopped');
-    recorder.stop();
-    recorder.onstop = async () => {
-      const blob = new Blob(audioChunks, { type: 'audio/wav' });
-      const formData = new FormData();
-      formData.append('audio', blob);
-
-      console.log('Uploading audio to AssemblyAI');
-      
-      try {
-        const response = await fetch('https://api.assemblyai.com/v2/upload', {
-          method: 'POST',
-          headers: {
-            'authorization': ASSEMBLYAI_API_KEY
-          },
-          body: formData
-        });
-
-        if (!response.ok) {
-          console.error("Upload failed. Status:", response.status);
-          return;
-        }
-
-        const data = await response.json();
-        const audioUrl = data.upload_url;
-        console.log('Audio uploaded, starting transcription');
-
-        document.getElementById('transcript-result').innerText = "Thank you, we are analyzing your answer, 1 moment please";
-
-        // Start transcription
-        startTranscription(audioUrl);
-      } catch (error) {
-        console.error("Error uploading audio:", error);
-      }
-    };
-  };
-
-  // Function to start transcription
-  const startTranscription = async (audioUrl) => {
-    console.log('Starting transcription');
-    const response = await fetch('https://api.assemblyai.com/v2/transcript', {
-      method: 'POST',
-      headers: {
-        'authorization': ASSEMBLYAI_API_KEY,
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify({ audio_url: audioUrl })
-    });
-
-    const transcription = await response.json();
-    pollTranscription(transcription.id);
-  };
-
-  // Function to poll transcription status
-  const pollTranscription = async (transcriptionId) => {
-  const interval = setInterval(async () => {
-    try {
-      const response = await fetch(`https://api.assemblyai.com/v2/transcript/${transcriptionId}`, {
-        method: 'GET',
-        headers: { 'authorization': process.env.NEXT_PUBLIC_ASSEMBLYAI_API_KEY }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Polling failed with status ${response.status}`);
-      }
-
-      const transcriptionResult = await response.json();
-      console.log('Polling result:', transcriptionResult);  // Log each polling result
-
-      if (transcriptionResult.status === 'completed') {
-        clearInterval(interval);
-        // Handle the completed transcription here
-        console.log('Transcription completed:', transcriptionResult.text);
-      } else if (transcriptionResult.status === 'failed') {
-        clearInterval(interval);
-        console.error('Transcription failed:', transcriptionResult.error);
-      }
-    } catch (error) {
-      clearInterval(interval);
-      console.error('Error polling transcription:', error);
+    function goToPage(pageNumber) {
+      document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+      document.getElementById('page' + pageNumber).classList.add('active');
     }
-  }, 5000); // Poll every 5 seconds
-};
 
-  // Function to send transcription text to OpenAI for analysis
-  const sendToChatGPT = async (text) => {
-    console.log('Sending text to ChatGPT for analysis');
-    const response = await fetch('https://api.openai.com/v1/completions', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${OPENAI_API_KEY}` },
-      body: JSON.stringify({
-        model: "text-davinci-003",
-        prompt: `Analyze this response: ${text} and evaluate the user's English proficiency level.`,
-        max_tokens: 150
-      })
-    });
+    function startRecordingPage5() {
+      const button = document.getElementById('record-button-page5');
+      const timerDisplay = document.getElementById('timer');
+      let timeLeft = 30;
 
-    const data = await response.json();
-    const analysis = data.choices[0].text.trim();
-    console.log('ChatGPT analysis:', analysis);
-
-    // Display the ChatGPT analysis result
-    document.getElementById('analysis-result').innerText = `ChatGPT analysis: ${analysis}`;
-
-    // Move to Page 5 after analysis
-    showPage('page5');
-  };
-
-  // Button for starting and stopping the recording
-  document.getElementById('record-button').addEventListener('click', function() {
-    console.log('Record button clicked');
-    if (!recorder || recorder.state === "inactive") {
-      startRecording();
-      this.textContent = "Recording...";
-      this.classList.add('recording');
-      this.classList.remove('idle');
-    } else {
-      stopRecording();
-      this.textContent = "Record your answer";
-      this.classList.add('idle');
-      this.classList.remove('recording');
+      if (button.textContent === 'Record your answer') {
+        button.textContent = 'Stop Recording';
+        button.classList.add('recording');
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          timerDisplay.textContent = timeLeft + 's';
+          if (timeLeft <= 0) {
+            stopRecordingPage5();
+          }
+        }, 1000);
+      } else {
+        stopRecordingPage5();
+      }
     }
-  });
 
-  // Navigation logic to show different pages
-  const showPage = (pageId) => {
-    console.log('Navigating to:', pageId);
-    const pages = ['page1', 'page2', 'page3', 'page4', 'page5'];
-    pages.forEach(id => {
-      document.getElementById(id).style.display = id === pageId ? 'block' : 'none';
-    });
-  };
+    function stopRecordingPage5() {
+      clearInterval(timerInterval);
+      document.getElementById('record-button-page5').textContent = 'Record your answer';
+      document.getElementById('record-button-page5').classList.remove('recording');
+      document.getElementById('timer').textContent = '30s';
+      goToPage(6);
+    }
 
-  // Ready button navigation
-  document.getElementById('ready-button').addEventListener('click', function() {
-    console.log('Ready button clicked');
-    showPage('page2');
-  });
+    function nextQuestion() {
+      const container = document.getElementById('mcq-container');
+      container.innerHTML = `
+        <p>2. Why is experiencing the culture important when learning English?</p>
+        <button onclick="finalQuestion()">A) It helps you understand the language better.</button>
+        <button onclick="finalQuestion()">B) It teaches you how to cook local dishes.</button>
+        <button onclick="finalQuestion()">C) It helps you remember vocabulary lists.</button>
+      `;
+    }
 
-  // Form 1 submission (to Page 3)
-  document.getElementById('form1').addEventListener('submit', function(event) {
-    event.preventDefault();
-    showPage('page3');
-  });
-
-  // Form 2 submission (to Page 4)
-  document.getElementById('form2').addEventListener('submit', function(event) {
-    event.preventDefault();
-    showPage('page4');
-  });
-
-  // Initially show page 1
-  showPage('page1');
-});
-    </script>
-
+    function finalQuestion() {
+      const container = document.getElementById('mcq-container');
+      container.innerHTML = `
+        <p>3. According to the narrator, where can you hear everyday language while traveling?</p>
+        <button>A) In a library.</button>
+        <button>B) In museums or local markets.</button>
+        <button>C) In a quiet park.</button>
+      `;
+    }
+  </script>
 </body>
 </html>
