@@ -39,7 +39,7 @@
       height: 315px;
     }
 
-    .form-box, .question-box {
+    .form-box {
       width: 60%;
       margin: 20px auto;
       text-align: center;
@@ -63,14 +63,9 @@
       background-color: red;
     }
 
-    #timer {
-      font-size: 18px;
-      margin-top: 10px;
-    }
-
     img {
       width: 100%;
-      max-width: 1000px;
+      max-width: 800px;
       display: block;
       margin: 20px auto;
     }
@@ -117,7 +112,7 @@
   <div id="page4" class="page">
     <h1>Let’s Talk</h1>
     <div class="video-container">
-      <iframe src="https://www.youtube-nocookie.com/embed/DXQzd0REkXY" frameborder="0" allowfullscreen></iframe>
+      <iframe src="https://youtu.be-nocookie.com/embed/DXQzd0REkXY" frameborder="0" allowfullscreen></iframe>
     </div>
     <div class="form-box">
       <p>What is the most difficult thing about learning English?</p>
@@ -125,90 +120,24 @@
     </div>
   </div>
 
-  <!-- Page 5 -->
-  <div id="page5" class="page">
-    <h1>SpeechAce</h1>
-    <div class="video-container">
-      <iframe src="https://www.youtube-nocookie.com/embed/xIb8oYnc9gA" frameborder="0" allowfullscreen></iframe>
-    </div>
-    <div class="form-box">
-      <p>What is the most important skill for success in life?</p>
-      <button id="record-button-page5" onclick="startRecordingPage5()">Record your answer</button>
-      <span id="timer">30s</span>
-    </div>
-  </div>
-
-  <!-- Page 6 -->
-  <div id="page6" class="page">
-    <h1>Useful Information</h1>
-    <div class="video-container">
-      <iframe src="https://www.youtube-nocookie.com/embed/vXmhR3Mmaqc" frameborder="0" allowfullscreen></iframe>
-    </div>
-    <div class="question-box">
-      <p>Let’s check your knowledge</p>
-      <div id="mcq-container">
-        <p>1. What is one way that traveling can help improve your English?</p>
-        <button onclick="nextQuestion()">A) You can practice conversations with native speakers.</button>
-        <button onclick="nextQuestion()">B) You can study more grammar rules.</button>
-        <button onclick="nextQuestion()">C) You can read more books in English.</button>
-      </div>
-    </div>
-  </div>
-
   <script>
-    let timerInterval;
-
     function goToPage(pageNumber) {
       document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
       document.getElementById('page' + pageNumber).classList.add('active');
     }
 
-    function startRecordingPage5() {
-      const button = document.getElementById('record-button-page5');
-      const timerDisplay = document.getElementById('timer');
-      let timeLeft = 30;
-
+    function startRecording() {
+      const button = document.getElementById('record-button');
       if (button.textContent === 'Record your answer') {
         button.textContent = 'Stop Recording';
         button.classList.add('recording');
-        timerInterval = setInterval(() => {
-          timeLeft--;
-          timerDisplay.textContent = timeLeft + 's';
-          if (timeLeft <= 0) {
-            stopRecordingPage5();
-          }
-        }, 1000);
+        // Start recording logic here...
       } else {
-        stopRecordingPage5();
+        button.textContent = 'Record your answer';
+        button.classList.remove('recording');
+        // Stop recording logic here...
+        goToPage(5);
       }
-    }
-
-    function stopRecordingPage5() {
-      clearInterval(timerInterval);
-      document.getElementById('record-button-page5').textContent = 'Record your answer';
-      document.getElementById('record-button-page5').classList.remove('recording');
-      document.getElementById('timer').textContent = '30s';
-      goToPage(6);
-    }
-
-    function nextQuestion() {
-      const container = document.getElementById('mcq-container');
-      container.innerHTML = `
-        <p>2. Why is experiencing the culture important when learning English?</p>
-        <button onclick="finalQuestion()">A) It helps you understand the language better.</button>
-        <button onclick="finalQuestion()">B) It teaches you how to cook local dishes.</button>
-        <button onclick="finalQuestion()">C) It helps you remember vocabulary lists.</button>
-      `;
-    }
-
-    function finalQuestion() {
-      const container = document.getElementById('mcq-container');
-      container.innerHTML = `
-        <p>3. According to the narrator, where can you hear everyday language while traveling?</p>
-        <button>A) In a library.</button>
-        <button>B) In museums or local markets.</button>
-        <button>C) In a quiet park.</button>
-      `;
     }
   </script>
 </body>
