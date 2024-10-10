@@ -64,8 +64,7 @@
   </style>
 </head>
 <body>
-
-  <!-- Existing Pages... -->
+  <!-- Page 1 -->
   <div id="page1" class="container active">
     <h1>Welcome to Linguaphone</h1>
     <p>Your journey starts with just a few questions. Press "Ready" to begin.</p>
@@ -73,24 +72,40 @@
     <button onclick="goToPage(2)">Ready</button>
   </div>
 
+  <!-- Page 2: Contact Details -->
   <div id="page2" class="container">
     <h1>Your Contact Details</h1>
     <div class="video-container">
       <iframe src="https://www.youtube-nocookie.com/embed/rbpcbMMdbyo" frameborder="0" allowfullscreen></iframe>
     </div>
-    <!-- Form... -->
-    <button onclick="goToPage(3)">Next</button>
+    <div class="form-box">
+      <form id="form1">
+        <input type="text" id="first-name" name="first-name" required placeholder="First Name">
+        <input type="text" id="last-name" name="last-name" required placeholder="Last Name">
+        <input type="email" id="email" name="email" required placeholder="Email">
+        <input type="text" id="phone" name="phone" required placeholder="Phone Number">
+        <button type="submit">Submit</button>
+      </form>
+    </div>
   </div>
 
+  <!-- Page 3 -->
   <div id="page3" class="container">
     <h1>Tell Me More</h1>
     <div class="video-container">
       <iframe src="https://www.youtube-nocookie.com/embed/lnjfpj60-r8" frameborder="0" allowfullscreen></iframe>
     </div>
-    <!-- Form... -->
-    <button onclick="goToPage(4)">Next</button>
+    <div class="form-box">
+      <form id="form2">
+        <textarea id="time-to-learn" name="time-to-learn" rows="3" required placeholder="How much time do you have to learn English?"></textarea>
+        <textarea id="motivation" name="motivation" rows="3" required placeholder="What is your motivation to learn English?"></textarea>
+        <textarea id="interests" name="interests" rows="3" required placeholder="What are some of your interests?"></textarea>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
   </div>
 
+  <!-- Page 4: Speech to Text -->
   <div id="page4" class="container">
     <h1>Let’s Talk</h1>
     <div class="video-container">
@@ -98,19 +113,7 @@
     </div>
     <div class="form-box">
       <p>What is the most difficult thing about learning English?</p>
-      <button onclick="goToPage(5)">Record your answer</button>
-    </div>
-  </div>
-
-  <!-- Page 5: New Structure -->
-  <div id="page5" class="container">
-    <h1>SpeechAce</h1>
-    <div class="video-container">
-      <iframe src="https://www.youtube-nocookie.com/embed/xIb8oYnc9gA" frameborder="0" allowfullscreen></iframe>
-    </div>
-    <div class="form-box">
-      <p>Speak for at least 30 seconds.</p>
-      <button onclick="startRecording()">Record your answer</button>
+      <button id="record-button" onclick="startRecording()">Record your answer</button>
     </div>
   </div>
 
