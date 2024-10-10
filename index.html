@@ -8,39 +8,67 @@
     body {
       font-family: Arial, sans-serif;
       background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
     }
+
     h1 {
       text-align: center;
       font-size: 36px;
       margin-top: 30px;
     }
+
     p {
       text-align: center;
       font-size: 18px;
       margin-bottom: 20px;
     }
+
     .container {
       display: none;
       padding: 20px;
       max-width: 800px;
       margin: auto;
     }
+
     .container.active {
       display: block;
     }
+
     .video-container {
       text-align: center;
       margin: 20px 0;
+      border: 2px solid #ccc;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #fff;
     }
+
     .video-container iframe {
       width: 100%;
       max-width: 640px;
       height: 360px;
     }
+
     .form-box {
+      width: 100%;
+      max-width: 600px;
+      margin: 20px auto;
       text-align: center;
-      margin: 20px 0;
+      border: 2px solid #ccc;
+      padding: 20px;
+      background-color: #fff;
     }
+
+    .form-box input,
+    .form-box textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
     button {
       display: block;
       margin: 20px auto;
@@ -52,6 +80,13 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
+    img {
+      width: 100%;
+      max-width: 800px;
+      display: block;
+      margin: 20px auto;
+    }
   </style>
 </head>
 <body>
@@ -60,7 +95,7 @@
   <div id="page1" class="container active">
     <h1>Welcome to Linguaphone</h1>
     <p>Your journey starts with just a few questions. Press "Ready" to begin.</p>
-    <img src="https://justindonlon.com/wp-content/uploads/2024/10/UK-home-page-.png" alt="Image of London Bridge" style="max-width: 50%; display: block; margin: 0 auto;">
+    <img src="https://justindonlon.com/wp-content/uploads/2024/10/UK-home-page-.png" alt="Image of London Bridge">
     <button onclick="goToPage(2)">Ready</button>
   </div>
 
@@ -71,14 +106,12 @@
       <iframe src="https://www.youtube-nocookie.com/embed/rbpcbMMdbyo" frameborder="0" allowfullscreen></iframe>
     </div>
     <div class="form-box">
-      <form id="form1">
-        <input type="text" placeholder="First Name">
-        <input type="text" placeholder="Last Name">
-        <input type="email" placeholder="Email">
-        <button type="submit">Submit</button>
-      </form>
+      <input type="text" placeholder="First Name">
+      <input type="text" placeholder="Last Name">
+      <input type="email" placeholder="Email">
+      <input type="text" placeholder="Phone Number">
+      <button onclick="goToPage(3)">Submit</button>
     </div>
-    <button onclick="goToPage(3)">Next</button>
   </div>
 
   <!-- Page 3 -->
@@ -88,7 +121,9 @@
       <iframe src="https://www.youtube-nocookie.com/embed/lnjfpj60-r8" frameborder="0" allowfullscreen></iframe>
     </div>
     <div class="form-box">
-      <textarea rows="4" placeholder="Your answer..."></textarea>
+      <textarea placeholder="How much time do you have to learn English?" rows="3"></textarea>
+      <textarea placeholder="What is your motivation to learn English?" rows="3"></textarea>
+      <textarea placeholder="What are some of your interests?" rows="3"></textarea>
       <button onclick="goToPage(4)">Submit</button>
     </div>
   </div>
@@ -100,7 +135,7 @@
       <iframe src="https://www.youtube-nocookie.com/embed/DXQzd0REkXY" frameborder="0" allowfullscreen></iframe>
     </div>
     <div class="form-box">
-      <p>What is the most difficult thing about learning English?</p>
+      <p>Question: "What is the most difficult thing about learning English?"</p>
       <button onclick="startRecording()">Record your answer</button>
     </div>
   </div>
@@ -118,5 +153,6 @@
       // Placeholder for recording logic.
     }
   </script>
+
 </body>
 </html>
