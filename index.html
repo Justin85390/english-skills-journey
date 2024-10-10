@@ -8,48 +8,39 @@
     body {
       font-family: Arial, sans-serif;
       background-color: #f5f5f5;
-      margin: 0;
-      padding: 0;
     }
-
     h1 {
       text-align: center;
       font-size: 36px;
       margin-top: 30px;
     }
-
     p {
       text-align: center;
       font-size: 18px;
+      margin-bottom: 20px;
     }
-
     .container {
       display: none;
       padding: 20px;
       max-width: 800px;
       margin: auto;
     }
-
     .container.active {
       display: block;
     }
-
     .video-container {
       text-align: center;
       margin: 20px 0;
     }
-
     .video-container iframe {
       width: 100%;
       max-width: 640px;
       height: 360px;
     }
-
     .form-box {
       text-align: center;
       margin: 20px 0;
     }
-
     button {
       display: block;
       margin: 20px auto;
@@ -64,6 +55,7 @@
   </style>
 </head>
 <body>
+
   <!-- Page 1 -->
   <div id="page1" class="container active">
     <h1>Welcome to Linguaphone</h1>
@@ -72,7 +64,7 @@
     <button onclick="goToPage(2)">Ready</button>
   </div>
 
-  <!-- Page 2: Contact Details -->
+  <!-- Page 2 -->
   <div id="page2" class="container">
     <h1>Your Contact Details</h1>
     <div class="video-container">
@@ -80,13 +72,13 @@
     </div>
     <div class="form-box">
       <form id="form1">
-        <input type="text" id="first-name" name="first-name" required placeholder="First Name">
-        <input type="text" id="last-name" name="last-name" required placeholder="Last Name">
-        <input type="email" id="email" name="email" required placeholder="Email">
-        <input type="text" id="phone" name="phone" required placeholder="Phone Number">
+        <input type="text" placeholder="First Name">
+        <input type="text" placeholder="Last Name">
+        <input type="email" placeholder="Email">
         <button type="submit">Submit</button>
       </form>
     </div>
+    <button onclick="goToPage(3)">Next</button>
   </div>
 
   <!-- Page 3 -->
@@ -96,16 +88,12 @@
       <iframe src="https://www.youtube-nocookie.com/embed/lnjfpj60-r8" frameborder="0" allowfullscreen></iframe>
     </div>
     <div class="form-box">
-      <form id="form2">
-        <textarea id="time-to-learn" name="time-to-learn" rows="3" required placeholder="How much time do you have to learn English?"></textarea>
-        <textarea id="motivation" name="motivation" rows="3" required placeholder="What is your motivation to learn English?"></textarea>
-        <textarea id="interests" name="interests" rows="3" required placeholder="What are some of your interests?"></textarea>
-        <button type="submit">Submit</button>
-      </form>
+      <textarea rows="4" placeholder="Your answer..."></textarea>
+      <button onclick="goToPage(4)">Submit</button>
     </div>
   </div>
 
-  <!-- Page 4: Speech to Text -->
+  <!-- Page 4 -->
   <div id="page4" class="container">
     <h1>Let’s Talk</h1>
     <div class="video-container">
@@ -113,7 +101,7 @@
     </div>
     <div class="form-box">
       <p>What is the most difficult thing about learning English?</p>
-      <button id="record-button" onclick="startRecording()">Record your answer</button>
+      <button onclick="startRecording()">Record your answer</button>
     </div>
   </div>
 
