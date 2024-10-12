@@ -204,7 +204,7 @@
     }
 
     async function sendToGoogleCloud(audioBlob) {
-      const apiKey = NEXT_PUBLIC_GOOGLE_CLOUD_API_KEY;  // Use the environment variable
+      const apiKey = window.NEXT_PUBLIC_GOOGLE_CLOUD_API_KEY;  // Use the environment variable
       const url = `https://speech.googleapis.com/v1/speech:recognize?key=${apiKey}`;
 
       // Convert Blob to Base64
@@ -239,6 +239,10 @@
             const transcription = data.results[0].alternatives[0].transcript;
             console.log("Transcription:", transcription);
             alert(`Transcription: ${transcription}`);
+            // Trigger page transition if the transcription is 'ready'
+            if (transcription.toLowerCase() === 'ready') {
+              goToPage(2);
+            }
             // Send transcription to OpenAI API for response
             await sendToOpenAI(transcription);
           } else {
@@ -253,7 +257,7 @@
     }
 
     async function sendToOpenAI(transcription) {
-      const openaiApiKey = NEXT_PUBLIC_OPENAI_API_KEY;  // Use the environment variable
+      const openaiApiKey = window.NEXT_PUBLIC_OPENAI_API_KEY;  // Use the environment variable
       const url = 'https://api.openai.com/v1/completions';
 
       const requestPayload = {
