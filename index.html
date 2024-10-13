@@ -150,22 +150,6 @@
     let mediaRecorder;
     let audioChunks = [];
   
-    function goToPage(pageNumber) {
-      document.querySelectorAll('.container').forEach(container => {
-        container.classList.remove('active');
-      });
-      document.getElementById('page' + pageNumber).classList.add('active');
-    }
-  
-    async function toggleRecording() {
-      const recordBtn = document.getElementById('recordBtn');
-      if (recordBtn.classList.contains('recording')) {
-        stopRecording();
-      } else {
-        await startRecording();
-      }
-    }
-  
     async function startRecording() {
       const recordBtn = document.getElementById('recordBtn');
       recordBtn.innerText = "Stop Recording";
@@ -173,6 +157,8 @@
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorder = new MediaRecorder(stream);
+        console.log("MediaRecorder MIME type:", mediaRecorder.mimeType); // Log the MIME type of the recording
+  
         audioChunks = [];
   
         mediaRecorder.ondataavailable = (event) => {
@@ -180,7 +166,7 @@
         };
   
         mediaRecorder.onstop = async () => {
-          const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+          const audioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType });
           const audioUrl = URL.createObjectURL(audioBlob);
           const audioElement = document.getElementById('audio');
           audioElement.src = audioUrl;
@@ -196,17 +182,6 @@
       }
     }
   
-    function stopRecording() {
-    if (mediaRecorder && mediaRecorder.state === "recording") {
-      mediaRecorder.stop();
-      const recordBtn = document.getElementById('recordBtn');
-      recordBtn.innerText = "Start Recording";
-      recordBtn.classList.remove('recording');
-    } else {
-      console.error("No active recording found to stop.");
-    }
-  }  // <-- Add this closing curly brace
-  
     async function sendToGoogleCloud(audioBlob) {
       const apiKey = window.NEXT_PUBLIC_GOOGLE_CLOUD_API_KEY;  // Use the environment variable
       const url = `https://speech.googleapis.com/v1/speech:recognize?key=${apiKey}`;
@@ -216,11 +191,12 @@
       reader.readAsDataURL(audioBlob);
       reader.onloadend = async () => {
         const base64data = reader.result.split(',')[1];
+        console.log("Base64 Audio Data:", base64data); // Log Base64 data for inspection
   
         // Set up the request payload for Google Cloud Speech-to-Text
         const requestPayload = {
           config: {
-            encoding: "WEBM_OPUS",  // Changed from "MP3"
+            encoding: "OGG_OPUS",  // Changed from "WEBM_OPUS" to "OGG_OPUS"
             sampleRateHertz: 48000, // Changed from 16000 to 48000
             languageCode: "en-US"
           },
@@ -264,41 +240,9 @@
       };
     }
   
-    async function sendToOpenAI(transcription) {
-      const openaiApiKey = window.NEXT_PUBLIC_OPENAI_API_KEY;  // Use the environment variable
-      const url = 'https://api.openai.com/v1/completions';
-  
-      const requestPayload = {
-        model: 'text-davinci-004',
-        prompt: `User said: "${transcription}". Provide an appropriate response:`,
-        max_tokens: 150
-      };
-  
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${openaiApiKey}`
-          },
-          body: JSON.stringify(requestPayload)
-        });
-  
-        const data = await response.json();
-        if (data && data.choices && data.choices[0]) {
-          const aiResponse = data.choices[0].text.trim();
-          console.log("AI Response:", aiResponse);
-          alert(`AI Response: ${aiResponse}`);
-        } else {
-          console.error("No response from OpenAI");
-          alert('No response from OpenAI');
-        }
-      } catch (error) {
-        console.error('Error with OpenAI API:', error);
-        alert('An error occurred while trying to get a response from OpenAI.');
-      }
-    }
+    // The rest of your existing script...
   </script>
+  
   
   
   
