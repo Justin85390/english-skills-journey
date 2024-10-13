@@ -147,154 +147,155 @@
   </div>
 
   <script>
-  let mediaRecorder;
-  let audioChunks = [];
-
-  function goToPage(pageNumber) {
-    document.querySelectorAll('.container').forEach(container => {
-      container.classList.remove('active');
-    });
-    document.getElementById('page' + pageNumber).classList.add('active');
-  }
-
-  async function toggleRecording() {
-    const recordBtn = document.getElementById('recordBtn');
-    if (recordBtn.classList.contains('recording')) {
-      stopRecording();
-    } else {
-      await startRecording();
+    let mediaRecorder;
+    let audioChunks = [];
+  
+    function goToPage(pageNumber) {
+      document.querySelectorAll('.container').forEach(container => {
+        container.classList.remove('active');
+      });
+      document.getElementById('page' + pageNumber).classList.add('active');
     }
-  }
-
-  async function startRecording() {
-    const recordBtn = document.getElementById('recordBtn');
-    recordBtn.innerText = "Stop Recording";
-    recordBtn.classList.add('recording');
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder = new MediaRecorder(stream);
-      audioChunks = [];
-
-      mediaRecorder.ondataavailable = (event) => {
-        audioChunks.push(event.data);
-      };
-
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
-        const audioUrl = URL.createObjectURL(audioBlob);
-        const audioElement = document.getElementById('audio');
-        audioElement.src = audioUrl;
-        audioElement.style.display = 'block';
-        audioElement.play();
-        // Send audioBlob to Google Cloud API for transcription
-        await sendToGoogleCloud(audioBlob);
-      };
-
-      mediaRecorder.start();
-    } catch (err) {
-      console.error('Error accessing microphone:', err);
+  
+    async function toggleRecording() {
+      const recordBtn = document.getElementById('recordBtn');
+      if (recordBtn.classList.contains('recording')) {
+        stopRecording();
+      } else {
+        await startRecording();
+      }
     }
-  }
-
-  function stopRecording() {
-    mediaRecorder.stop();
-    const recordBtn = document.getElementById('recordBtn');
-    recordBtn.innerText = "Start Recording";
-    recordBtn.classList.remove('recording');
-  }
-
-  async function sendToGoogleCloud(audioBlob) {
-    const apiKey = window.NEXT_PUBLIC_GOOGLE_CLOUD_API_KEY;  // Use the environment variable
-    const url = `https://speech.googleapis.com/v1/speech:recognize?key=${apiKey}`;
-
-    // Convert Blob to Base64
-    const reader = new FileReader();
-    reader.readAsDataURL(audioBlob);
-    reader.onloadend = async () => {
-      const base64data = reader.result.split(',')[1];
-
-      // Set up the request payload for Google Cloud Speech-to-Text
-      const requestPayload = {
-        config: {
-          encoding: "WEBM_OPUS",  // Changed from "MP3"
-          sampleRateHertz: 48000, // Changed from 16000 to 48000
-          languageCode: "en-US"
-        },
-        audio: {
-          content: base64data
+  
+    async function startRecording() {
+      const recordBtn = document.getElementById('recordBtn');
+      recordBtn.innerText = "Stop Recording";
+      recordBtn.classList.add('recording');
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+  
+        mediaRecorder.ondataavailable = (event) => {
+          audioChunks.push(event.data);
+        };
+  
+        mediaRecorder.onstop = async () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+          const audioUrl = URL.createObjectURL(audioBlob);
+          const audioElement = document.getElementById('audio');
+          audioElement.src = audioUrl;
+          audioElement.style.display = 'block';
+          audioElement.play();
+          // Send audioBlob to Google Cloud API for transcription
+          await sendToGoogleCloud(audioBlob);
+        };
+  
+        mediaRecorder.start();
+      } catch (err) {
+        console.error('Error accessing microphone:', err);
+      }
+    }
+  
+    function stopRecording() {
+      mediaRecorder.stop();
+      const recordBtn = document.getElementById('recordBtn');
+      recordBtn.innerText = "Start Recording";
+      recordBtn.classList.remove('recording');
+    }
+  
+    async function sendToGoogleCloud(audioBlob) {
+      const apiKey = window.NEXT_PUBLIC_GOOGLE_CLOUD_API_KEY;  // Use the environment variable
+      const url = `https://speech.googleapis.com/v1/speech:recognize?key=${apiKey}`;
+  
+      // Convert Blob to Base64
+      const reader = new FileReader();
+      reader.readAsDataURL(audioBlob);
+      reader.onloadend = async () => {
+        const base64data = reader.result.split(',')[1];
+  
+        // Set up the request payload for Google Cloud Speech-to-Text
+        const requestPayload = {
+          config: {
+            encoding: "WEBM_OPUS",  // Changed from "MP3"
+            sampleRateHertz: 48000, // Changed from 16000 to 48000
+            languageCode: "en-US"
+          },
+          audio: {
+            content: base64data
+          }
+        };
+  
+        console.log("Request Payload:", requestPayload); // Log the request payload
+  
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestPayload)
+          });
+  
+          const data = await response.json();
+          console.log("API Response:", data); // Log the API response
+  
+          if (data && data.results && data.results[0]) {
+            const transcription = data.results[0].alternatives[0].transcript;
+            console.log("Transcription:", transcription);
+            alert(`Transcription: ${transcription}`);
+            // Trigger page transition if the transcription is 'ready'
+            if (transcription.toLowerCase() === 'ready') {
+              goToPage(2);
+            }
+            // Send transcription to OpenAI API for response
+            await sendToOpenAI(transcription);
+          } else {
+            console.error("No transcription found");
+            alert('No transcription found');
+          }
+        } catch (error) {
+          console.error('Error with Google Cloud Speech-to-Text API:', error);
+          alert('An error occurred while trying to transcribe the audio.');
         }
       };
-
-      console.log("Request Payload:", requestPayload); // Log the request payload
-
+    }
+  
+    async function sendToOpenAI(transcription) {
+      const openaiApiKey = window.NEXT_PUBLIC_OPENAI_API_KEY;  // Use the environment variable
+      const url = 'https://api.openai.com/v1/completions';
+  
+      const requestPayload = {
+        model: 'text-davinci-004',
+        prompt: `User said: "${transcription}". Provide an appropriate response:`,
+        max_tokens: 150
+      };
+  
       try {
         const response = await fetch(url, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${openaiApiKey}`
           },
           body: JSON.stringify(requestPayload)
         });
-
+  
         const data = await response.json();
-        console.log("API Response:", data); // Log the API response
-
-        if (data && data.results && data.results[0]) {
-          const transcription = data.results[0].alternatives[0].transcript;
-          console.log("Transcription:", transcription);
-          alert(`Transcription: ${transcription}`);
-          // Trigger page transition if the transcription is 'ready'
-          if (transcription.toLowerCase() === 'ready') {
-            goToPage(2);
-          }
-          // Send transcription to OpenAI API for response
-          await sendToOpenAI(transcription);
+        if (data && data.choices && data.choices[0]) {
+          const aiResponse = data.choices[0].text.trim();
+          console.log("AI Response:", aiResponse);
+          alert(`AI Response: ${aiResponse}`);
         } else {
-          console.error("No transcription found");
-          alert('No transcription found');
+          console.error("No response from OpenAI");
+          alert('No response from OpenAI');
         }
       } catch (error) {
-        console.error('Error with Google Cloud Speech-to-Text API:', error);
-        alert('An error occurred while trying to transcribe the audio.');
+        console.error('Error with OpenAI API:', error);
+        alert('An error occurred while trying to get a response from OpenAI.');
       }
-    };
-  }
-
-  async function sendToOpenAI(transcription) {
-    const openaiApiKey = window.NEXT_PUBLIC_OPENAI_API_KEY;  // Use the environment variable
-    const url = 'https://api.openai.com/v1/completions';
-
-    const requestPayload = {
-      model: 'text-davinci-004',
-      prompt: `User said: "${transcription}". Provide an appropriate response:`,
-      max_tokens: 150
-    };
-
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${openaiApiKey}`
-        },
-        body: JSON.stringify(requestPayload)
-      });
-
-      const data = await response.json();
-      if (data && data.choices && data.choices[0]) {
-        const aiResponse = data.choices[0].text.trim();
-        console.log("AI Response:", aiResponse);
-        alert(`AI Response: ${aiResponse}`);
-      } else {
-        console.error("No response from OpenAI");
-        alert('No response from OpenAI');
-      }
-    } catch (error) {
-      console.error('Error with OpenAI API:', error);
-      alert('An error occurred while trying to get a response from OpenAI.');
     }
-  }
-</script>
+  </script>
+  
 
 
 </body>
