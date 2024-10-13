@@ -205,6 +205,7 @@
     } else {
       console.error("No active recording found to stop.");
     }
+  }  // <-- Add this closing curly brace
   
     async function sendToGoogleCloud(audioBlob) {
       const apiKey = window.NEXT_PUBLIC_GOOGLE_CLOUD_API_KEY;  // Use the environment variable
