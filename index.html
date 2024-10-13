@@ -173,7 +173,6 @@
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorder = new MediaRecorder(stream);
-        console.log("MediaRecorder MIME type:", mediaRecorder.mimeType); // Log the MIME type of the recording
         audioChunks = [];
   
         mediaRecorder.ondataavailable = (event) => {
@@ -198,10 +197,13 @@
     }
   
     function stopRecording() {
+    if (mediaRecorder && mediaRecorder.state === "recording") {
       mediaRecorder.stop();
       const recordBtn = document.getElementById('recordBtn');
       recordBtn.innerText = "Start Recording";
       recordBtn.classList.remove('recording');
+    } else {
+      console.error("No active recording found to stop.");
     }
   
     async function sendToGoogleCloud(audioBlob) {
@@ -213,12 +215,11 @@
       reader.readAsDataURL(audioBlob);
       reader.onloadend = async () => {
         const base64data = reader.result.split(',')[1];
-        console.log("Base64 Audio Data:", base64data); // Log Base64 data for inspection
   
         // Set up the request payload for Google Cloud Speech-to-Text
         const requestPayload = {
           config: {
-            encoding: "OGG_OPUS",  // Changed from "WEBM_OPUS" to "OGG_OPUS"
+            encoding: "WEBM_OPUS",  // Changed from "MP3"
             sampleRateHertz: 48000, // Changed from 16000 to 48000
             languageCode: "en-US"
           },
@@ -296,13 +297,6 @@
         alert('An error occurred while trying to get a response from OpenAI.');
       }
     }
-  
-    // Add event listener for the recording button to ensure it works after DOM loads
-    document.addEventListener("DOMContentLoaded", () => {
-      const recordBtn = document.getElementById('recordBtn');
-      recordBtn.addEventListener('click', toggleRecording);
-    });
-  
   </script>
   
   
